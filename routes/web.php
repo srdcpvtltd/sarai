@@ -19,6 +19,8 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\CityController;
+use App\Http\Controllers\CriminalsController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -51,7 +53,7 @@ Route::post('/chart', [HomeController::class, 'chart'])->name('get.chart.data')-
 
 Route::get('notification', [HomeController::class,'notification']);
 
-// Guest 
+// Guest
 Route::get('/guest/create', [GuestController::class, 'index'])->name('guest.create')->middleware(['auth','XSS','2fa',]);
 Route::post('/guest/store', [GuestController::class, 'store'])->name('guest.store')->middleware(['auth','XSS','2fa',]);
 Route::get('/guest/list', [GuestController::class, 'checkoutList'])->name('guest.list')->middleware(['auth','XSS','2fa',]);
@@ -110,7 +112,8 @@ Route::group(['middleware' => ['auth','XSS']], function ()
     Route::resource('countries',CountryController::class);
     Route::resource('states',StateController::class);
     Route::resource('cities',CityController::class);
-    
+    Route::resource('criminals',CriminalsController::class);
+
 
 });
 
@@ -188,71 +191,4 @@ Route::group(['middleware' => 'auth'], function() {
 });
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 Route::resource('tests', App\Http\Controllers\TestController::class)->middleware(['auth','XSS']);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
