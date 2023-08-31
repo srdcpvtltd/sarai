@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\DataTables\CriminalsDataTable;
 use App\Http\Requests\CreateCriminalRqeuest;
 use App\Http\Requests\CriminalRequest;
-use App\Http\Requests\UpdateCriminalRqeuest;
+use App\Http\Requests\UpdateCriminalRequest;
 
 class CriminalsController extends Controller
 {
@@ -74,7 +74,7 @@ class CriminalsController extends Controller
         return view('criminals.edit')->with(compact('criminal'));
     }
 
-    public function update(UpdateCriminalRqeuest $request, Criminal $criminal)
+    public function update(UpdateCriminalRequest $request, Criminal $criminal)
     {
         try {
 
