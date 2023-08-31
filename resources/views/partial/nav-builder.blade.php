@@ -26,6 +26,14 @@ $checkIsHotelCreated = DB::table('hotel_profiles')->where('user_id', Auth::id())
         @endcan
 
         @role('admin')
+
+
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link " href="{{ route('criminals.index') }}">
+                <i class="cil-user c-sidebar-nav-icon"></i>{{ __('Criminals') }}
+            </a>
+        </li>
+
             <li class="c-sidebar-nav-item">
                 <a class="c-sidebar-nav-link" href="{{ route('admin.report') }}">
                     <i class="cil-user c-sidebar-nav-icon"></i>{{ __('Report') }}
@@ -124,7 +132,7 @@ $checkIsHotelCreated = DB::table('hotel_profiles')->where('user_id', Auth::id())
                     <a class="c-sidebar-nav-link" href="{{ asset(url('edit-hotel/'.$checkIsHotelCreated->id)) }}">
                         <i class="cil-building c-sidebar-nav-icon"></i>{{ __('Edit Hotel') }}
                     </a>
-                @else 
+                @else
                     <a class="c-sidebar-nav-link" href="{{ route('add-hotel') }}">
                         <i class="cil-building c-sidebar-nav-icon"></i>{{ __('Add Hotel') }}
                     </a>
