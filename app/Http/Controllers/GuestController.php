@@ -24,7 +24,7 @@ class GuestController extends Controller
 
     public function store(Request $request)
     {
-        // check is hotel avialble or not 
+        // check is hotel avialble or not
         $hotel = HotelProfile::where('user_id',Auth::id())->first();
         //dd($request->all());
         if(!$hotel) {
@@ -35,14 +35,16 @@ class GuestController extends Controller
         if ($request->guest_image) {
             $image_64 = $request->guest_image; //your base64 encoded data
             $extension = explode('/', explode(':', substr($image_64, 0, strpos($image_64, ';')))[1])[1];   // .jpg .png .pdf
-            $replace = substr($image_64, 0, strpos($image_64, ',')+1); 
-            $image = str_replace($replace, '', $image_64); 
-            $image = str_replace(' ', '+', $image); 
-            $imageName = Str::random(20).'.'.$extension;
+            $replace = substr($image_64, 0, strpos($image_64, ',')+1);
+            $image = str_replace($replace, '', $image_64);
+            $image = str_replace(' ', '+', $image);
+            $imageName = time().'.'.$extension;
+
             Storage::disk('local')->put( $imageName, base64_decode($image));
+
             $booking->guest_image = $imageName;
         }
-      
+
         // if document id
         if ($request->file('document_id')) {
             $documentName = 'document_' . $request->file('document_id')->getClientOriginalName();
@@ -119,6 +121,7 @@ class GuestController extends Controller
                 $booking->accompanies()->createMany($request->accompany);
             }
         }
+        //dd($booking);
         return redirect('/dashboard')->with('success', "Booking created successfully.");
     }
 
@@ -158,7 +161,7 @@ class GuestController extends Controller
             $room->save();
             return redirect()->back()->with('success', "Booking status set in progress");
         }
-        
+
     }
 
     public function guestFilter(Request $request) {
@@ -211,7 +214,7 @@ class GuestController extends Controller
     public function getGuestDetail(Request $request) {
 
         $booking = Booking::where('mobile_number',$request->mobile)->first();
-        
+
         return response()->json($booking);
     }
 }

@@ -29,7 +29,8 @@ $company_favicon = UtilityFacades::getValByName('company_favicon');
     @endif
     <link href="{{ asset('css/toastr.min.css') }}" rel="stylesheet">
     @yield('css')
-    <script type="text/javascript" src="{{ asset(url('public\js\webcam.min.js')) }}"></script>
+
+    <script type="text/javascript" src="{{ asset('js/webcam.min.js') }}"></script>
 
 </head>
 

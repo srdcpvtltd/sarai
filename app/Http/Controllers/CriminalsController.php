@@ -8,6 +8,7 @@ use App\DataTables\CriminalsDataTable;
 use App\Http\Requests\CreateCriminalRqeuest;
 use App\Http\Requests\CriminalRequest;
 use App\Http\Requests\UpdateCriminalRequest;
+use Illuminate\Support\Facades\Storage;
 
 class CriminalsController extends Controller
 {
@@ -48,7 +49,10 @@ class CriminalsController extends Controller
             if ($request->file('photo')) {
                 $extension = $request->file('photo')->getClientOriginalExtension();
                 $documentName = time().'.'.$extension;
-                $request->photo->move(public_path('storage/criminals'), $documentName);
+
+                Storage::disk('local')->put( $documentName, $request->photo);
+
+                //$request->photo->move(public_path('storage/criminals'), $documentName);
                 $data['photo'] = $documentName;
             }
 

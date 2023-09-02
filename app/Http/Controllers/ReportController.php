@@ -75,12 +75,12 @@ class ReportController extends Controller
             });
             $inputs['status'] = $request->get('status');
         }
-                
+
         $bookings = $sql->paginate(20);
         $countries = \DB::table('countries')->get();
         return view('guest.report.simpleReport', compact('countries','bookings','inputs','states','cities'));
     }
-    
+
     public function export(Request $request){
         $inputs = [];
         $sql = Booking::with(['rooms','accompanies','nationalityName','country','state','city','hotelProfile'])
@@ -132,7 +132,7 @@ class ReportController extends Controller
             $sql->where('transport',$request->get('transport'));
             $inputs['transport'] = $request->get('transport');
         }
-              
+
         if($request->get('status') != ''){
             $status = ($request->get('status') == 'in') ? 0 : 1;
             $sql->whereHas('rooms', function($q) use ($status){
@@ -140,10 +140,10 @@ class ReportController extends Controller
             });
             $inputs['status'] = $request->get('status');
         }
-             
+
         $bookings = $sql->get();
-        
-        
+
+
         $fileName = 'bookings.csv';
 
         $headers = array(
@@ -155,15 +155,15 @@ class ReportController extends Controller
         );
         $filename =  public_path("files/bookings.csv");
         $handle = fopen($filename, 'w');
-        
+
         $columns = array("Hotel name","Hotel Address","Guest name","Mobile Number","Email","Guest From","Age","Gender","nationality","Address",
             "Lane","Country","State","Dist","Pin","Mean Of Transport","Number Of Children","Number Of Adults","Extra Guest Name",
             "Whom To Visit","Host Name","Host Mobile Number","Remarks","Arrival Date","In Time","Out Time","Duration","Status");
         fputcsv($handle, $columns);
 
-        
-        
-        
+
+
+
 
             foreach($bookings as $row){
                 $arr = [];
@@ -238,12 +238,13 @@ class ReportController extends Controller
                 $inputs['searchTo'] = $request->get('searchTo'); //Carbon::now()->endOfDay();
             }
         }else{
-            $inputs['searchFrom'] = date('Y-m-d');//Carbon::now()->startOfDay();
-            $inputs['searchTo'] = date('Y-m-d'); //Carbon::now()->endOfDay();
+            $inputs['searchFrom'] = date('Y-m-d 00:00:00');//Carbon::now()->startOfDay();
+            $inputs['searchTo'] = date('Y-m-d 23:59:59'); //Carbon::now()->endOfDay();
             $sql->whereBetween('created_at',[$inputs['searchFrom'],$inputs['searchTo']]);
         }
-
+        //dd($inputs);
         $bookings = $sql->paginate(20);
+        //dd($bookings);
         $countries = \DB::table('countries')->get();
         $police_stations = \DB::table('police_stations')->get();
 
@@ -420,7 +421,7 @@ class ReportController extends Controller
             $sql->where('gues_name',$request->get('gues_name'));
             $inputs['gues_name'] = $request->get('gues_name');
         }
-        
+
         if($request->get('status') != ''){
             $status = ($request->get('status') == 'in') ? 0 : 1;
             $sql->whereHas('rooms', function($q) use ($status){
@@ -430,7 +431,7 @@ class ReportController extends Controller
         }
 
         if($request->get('toAge') != '' && $request->get('fromAge') != ''){
-            
+
             $sql->whereBetween('age',[$request->get('fromAge'), $request->get('toAge')]);
             $inputs['fromAge'] = $request->get('fromAge');
             $inputs['toAge'] = $request->get('toAge');
@@ -450,10 +451,10 @@ class ReportController extends Controller
         $police_stations = \DB::table('police_stations')->get();
 
         $ageArr = \DB::table('bookings')->groupBy('age')->orderBy('age','ASC')->pluck('age');
-        
+
         return view('admin.report.simpleReport', compact('countries','bookings','inputs','states','cities','police_stations','ageArr'));
     }
-    
+
     public function adminexport(Request $request){
         $inputs = [];
         $sql = Booking::with(['rooms','accompanies','nationalityName','country','state','city','hotelProfile'])
@@ -513,10 +514,10 @@ class ReportController extends Controller
             });
             $inputs['status'] = $request->get('status');
         }
-                
+
         $bookings = $sql->get();
-        
-        
+
+
         $fileName = 'bookings.csv';
 
         $headers = array(
@@ -528,15 +529,15 @@ class ReportController extends Controller
         );
         $filename =  public_path("files/bookings.csv");
         $handle = fopen($filename, 'w');
-        
+
         $columns = array("Hotel name","Hotel Address","Guest name","Mobile Number","Email","Guest From","Age","Gender","nationality","Address",
             "Lane","Country","State","Dist","Pin","Mean Of Transport","Number Of Children","Number Of Adults","Extra Guest Name",
             "Whom To Visit","Host Name","Host Mobile Number","Remarks","Arrival Date","In Time","Out Time","Duration","Status");
         fputcsv($handle, $columns);
 
-        
-        
-        
+
+
+
 
             foreach($bookings as $row){
                 $arr = [];
@@ -585,12 +586,12 @@ class ReportController extends Controller
         return Response::download($filename, "bookings.csv", $headers);
 
     }
-    
+
     public function hotel_report(Request $request)
     {
         $inputs = [];
         $sql = HotelProfile::orderBy('created_at','DESC');
-        
+
         $cities = \DB::table('cities')->whereNotNull('code')->get();
         if($request->get('city') != ''){
             $sql->where('city',$request->get('city'));
@@ -609,19 +610,19 @@ class ReportController extends Controller
                 ->orWhere('owner_mobile', 'LIKE', '%'.$searchQuery.'%')->orWhere('address', 'LIKE', '%'.$searchQuery.'%')
                 ->orWhere('registration_number', 'LIKE', '%'.$searchQuery.'%');
             });
-            
+
             $inputs['search'] = $searchQuery;
         }
-        
+
         $hotels = $sql->paginate(20);
         $police_stations = \DB::table('police_stations')->get();
-                
+
         return view('admin.report.HotelReport', compact('hotels','inputs','cities','police_stations'));
     }
-    
+
     public function hotel_reportexport(Request $request){
         $sql = HotelProfile::orderBy('created_at','DESC');
-        
+
         $cities = \DB::table('cities')->whereNotNull('code')->get();
         if($request->get('city') != ''){
             $sql->where('city',$request->get('city'));
@@ -632,7 +633,7 @@ class ReportController extends Controller
             $inputs['police_station'] = $request->get('police_station');
         }
         $hotels = $sql->get();
-        
+
         $fileName = 'hotels.csv';
 
         $headers = array(
@@ -644,7 +645,7 @@ class ReportController extends Controller
         );
         $filename =  public_path("files/hotels.csv");
         $handle = fopen($filename, 'w');
-        
+
         $columns = array("Hotel name","Manage Name","Manage Mobile Number","Email","Owner Name","Ownere Mobile Number","hotel Address","registration","city","police Station",
             "Floor","Rooms","Direct Employee","OurSource Employee","Website");
         fputcsv($handle, $columns);
@@ -675,7 +676,7 @@ class ReportController extends Controller
     {
         $inputs = [];
         $sql = HotelProfile::orderBy('created_at','DESC');
-        
+
         $cities = \DB::table('cities')->whereNotNull('code')->get();
         if($request->get('city') != ''){
             $sql->where('city',$request->get('city'));
@@ -694,19 +695,19 @@ class ReportController extends Controller
                 ->orWhere('owner_mobile', 'LIKE', '%'.$searchQuery.'%')->orWhere('address', 'LIKE', '%'.$searchQuery.'%')
                 ->orWhere('registration_number', 'LIKE', '%'.$searchQuery.'%');
             });
-            
+
             $inputs['search'] = $searchQuery;
         }
-        
+
         $hotels = $sql->paginate(20);
         $police_stations = \DB::table('police_stations')->get();
-                
+
         return view('admin.report.ViewerReport', compact('hotels','inputs','cities','police_stations'));
     }
-    
+
     public function viewer_reportexport(Request $request){
         $sql = HotelProfile::orderBy('created_at','DESC');
-        
+
         $cities = \DB::table('cities')->whereNotNull('code')->get();
         if($request->get('city') != ''){
             $sql->where('city',$request->get('city'));
@@ -717,7 +718,7 @@ class ReportController extends Controller
             $inputs['police_station'] = $request->get('police_station');
         }
         $hotels = $sql->get();
-        
+
         $fileName = 'hotels.csv';
 
         $headers = array(
@@ -729,7 +730,7 @@ class ReportController extends Controller
         );
         $filename =  public_path("files/hotels.csv");
         $handle = fopen($filename, 'w');
-        
+
         $columns = array("Hotel name","Manage Name","Manage Mobile Number","Email","Owner Name","Ownere Mobile Number","hotel Address","registration","city","police Station",
             "Floor","Rooms","Direct Employee","OurSource Employee","Website");
         fputcsv($handle, $columns);
