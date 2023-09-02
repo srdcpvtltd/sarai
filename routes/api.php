@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FaceRecognitionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -18,6 +19,12 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+//get criminals
+Route::get('/criminals', [FaceRecognitionController::class, 'criminals']);
+//get guests - pending BG check only
+Route::get('/guests', [FaceRecognitionController::class, 'guests']);
+//send result
+Route::post('/save-bg-check-results', [FaceRecognitionController::class, 'saveBgCheckResults']);
 
 
 

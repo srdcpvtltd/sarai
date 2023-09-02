@@ -60,3 +60,22 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+
+## Tasks
+- Create Criminals admin crud
+    - Done
+
+- Image naming convention & storage
+    - Done
+
+- When Guest check in happens,
+    -   mark pending background check
+    -   Run script in BG to to compare it with criminals data
+    -   Mark Suspicious or Not
+
+( 
+- Out of scope
+- When New Criminal is uploaded,
+    - Run script to compare it to all guests data 
+)
