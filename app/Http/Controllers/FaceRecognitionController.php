@@ -33,7 +33,7 @@ class FaceRecognitionController extends Controller
 
         $booking->guest_photo = url('storage/bookings/'.$booking->guest_photo);
 
-        return response($booking);
+        return response([$booking]);
     }
 
     public function saveBgCheckResults(Request $request){
