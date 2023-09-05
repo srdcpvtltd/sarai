@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Booking;
 use App\Models\Criminal;
+use App\Models\CriminalBookingMatch;
 use Illuminate\Http\Request;
 
 class FaceRecognitionController extends Controller
@@ -36,6 +37,7 @@ class FaceRecognitionController extends Controller
             'guest_image as photo'
          ])
          ->whereNull('suspicious')
+         ->where('suspicious_check',0)
          ->orderBy('created_at','DESC')
          ->first();
 
@@ -46,20 +48,42 @@ class FaceRecognitionController extends Controller
 
     public function saveBgCheckResults(Request $request){
         $data = $request->all();
+        $suspiciuos = (int)$data['suspiciuos'] ?? null;
 
-        /*
-        $data = [
-            guest_id => 1231,
-            suspiciuos => 1 or 0,
-            criminal_id => 343 or null
-        ];
-        */
+        if(empty($suspiciuos))
+            return response('invalid data');
 
-        $guest = Booking::where('id',$data['guest_id'])
-        ->update([
-            'suspicious' => $data['suspicious'] ?? 0,
-            'criminal_id' => $data['criminal_id'] ?? null
-        ]);
+        try{
+            if($suspiciuos){
+                if(
+                    !empty($data['criminal_id'])
+                    && !empty($data['booking_id'])
+                    && !empty($data['accuracy'])
+                ){
+                    CriminalBookingMatch::updateOrCreate(
+                        [
+                            'criminal_id' => $data['criminal_id'],
+                            'booking_id' => $data['booking_id'],
+                        ],
+                        [
+                            'accuracy' => $data['accuracy']
+                        ]
+                    );
+                }
+            }else{
+                //
+            }
+
+            //update booking info as  in both cases
+            $guest = Booking::where('id',$data['booking_id'])
+            ->update([
+                'suspicious_check' => 1,// 1 - processed, 0 - pending
+            ]);
+
+        }catch(\Exception $e){
+            return response('error'.substr($e->getMessage(), 0, 100));
+        }
+        return response('success');
 
     }
 

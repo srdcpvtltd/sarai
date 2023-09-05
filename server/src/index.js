@@ -73,14 +73,15 @@ async function runFaceMatch(criminals, guests) {
 
     //console.log('criminals', criminals)
     //console.log('guests', guests)
+    const guest = guests[0];
 
     //load all images in faceMatcher - train model with existing set of images
     console.log('faceMatcher.. preparing',faceMatcher)
     faceMatcher =  await createBbtFaceMatcher(criminals)
     console.log('faceMatcher.. training data loaded ',faceMatcher)
 
-    console.log('preparing query image data',guests[0].photo_url)
-    const queryImage = await canvas.loadImage(guests[0].photo_url)
+    console.log('preparing query image data',guest.photo_url)
+    const queryImage = await canvas.loadImage(guest.photo_url)
     const queryImgFaceDescriptors = await faceapi.computeFaceDescriptor(queryImage)
     console.log('Query image descriptor computed',queryImgFaceDescriptors)
 
@@ -103,12 +104,26 @@ async function runFaceMatch(criminals, guests) {
         let bestMatchUserId = matchArray[0].replace('user_', '')
 
         //get accuracy
-        let accuracy = matchArray[1].replace('(', '').replace(')','')
-        accuracy = (10 - accuracy ) * 100
+        let accuracy = parseFloat(matchArray[1].replace('(', '').replace(')',''))
+        accuracy = (10 - accuracy) * 10
 
         console.log('bestMatch...'+bestMatch)
         console.log('accuracy...'+accuracy)
         console.log('bestMatchUserId...'+bestMatchUserId)
+
+        //send result to API
+        const payload = {
+            booking_id : parseInt(guest.id),
+            suspiciuos: 1,
+            criminal_id: parseInt(bestMatchUserId),
+            accuracy: accuracy,
+        }
+        console.log(payload)
+        axios.post(API_URL+'/save-bg-check-results',payload).then((response) => {
+            let data = response.data
+                console.log('data',data)
+                //return
+        })
     }
 
 
