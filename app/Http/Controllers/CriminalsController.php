@@ -8,6 +8,7 @@ use App\DataTables\CriminalsDataTable;
 use App\Http\Requests\CreateCriminalRqeuest;
 use App\Http\Requests\CriminalRequest;
 use App\Http\Requests\UpdateCriminalRequest;
+use App\Models\CriminalBookingMatch;
 use Illuminate\Support\Facades\Storage;
 
 class CriminalsController extends Controller
@@ -107,7 +108,11 @@ class CriminalsController extends Controller
     public function destroy(Criminal $criminal)
     {
         try {
+
+            CriminalBookingMatch::where('criminal_id',$criminal->id)->delete();
+
             $criminal->delete();
+
         } catch (\Exception $exception) {
             return redirect()->route('criminals.index')
             ->with('message', __('Error while deleting data!'));

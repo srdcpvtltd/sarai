@@ -18,12 +18,6 @@ vendor/*
 /vendor/**/.git
 storage
 
-nodefc/node_modules
-nodefc/build
-nodefc/npm-debug.log
-nodefc/.nyc
-nodefc/.DS_Store
-
 server/node_modules
 server/build
 server/npm-debug.log

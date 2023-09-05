@@ -29,7 +29,12 @@ const __dirname = path.dirname(__filename);
 
 console.log('hello', __dirname)
 
-const API_URL = process.env.API_URL
+const API_URL = (process.env.STATUS == 'PROD') ? process.env.PROD_URL+'/api' :
+                (process.env.STATUS == 'DEMO') ? process.env.DEMO_URL+'/api' :
+                process.env.DEV_URL+'/api'
+
+const PORT = process.env.PORT
+
 axios.create({baseUrl: API_URL});
 
 const MODEL_PATH = path.join(__dirname, '../weights')
@@ -219,7 +224,6 @@ async function run(){
 run()
 
 const app = express()
-const PORT = 3000
 app.use(express.json());
 app.listen(PORT, () => {
     console.log("Server Listening on PORT:", PORT);
