@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Booking;
 use App\Models\BookingRoom;
+use App\Models\Criminal;
+use App\Models\CriminalBookingMatch;
 use App\Models\HotelProfile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -132,6 +134,7 @@ class GuestController extends Controller
 
     public function show($bookingId) {
         $booking = Booking::where('user_id',Auth::id())->where('id',$bookingId)->with(['country','state','city','rooms','accompanies','nationalityName','p_country','p_city','p_state'])->first();
+
         return view('guest.detail')->with('booking' ,$booking);
     }
 
@@ -142,7 +145,15 @@ class GuestController extends Controller
 
     public function adminshow($bookingId) {
         $booking = Booking::where('id',$bookingId)->with(['country','state','city','rooms','accompanies','nationalityName','p_country','p_city','p_state'])->first();
-        return view('guest.detail',['booking' => $booking]);
+
+        $criminal = $crimminalMatch = null;
+        //get criminal mapping if any
+        $crimminalMatch = CriminalBookingMatch::where('booking_id',$bookingId)->first();
+        if($crimminalMatch){
+            //get criminal details
+            $criminal = Criminal::where('id',$crimminalMatch->criminal_id)->first();
+        }
+        return view('guest.detail')->with(compact('booking','criminal'));
     }
 
     public function checkOut($bookingId, $roomId) {

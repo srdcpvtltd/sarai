@@ -47,14 +47,16 @@ class FaceRecognitionController extends Controller
     }
 
     public function saveBgCheckResults(Request $request){
-        $data = $request->all();
-        $suspiciuos = (int)$data['suspiciuos'] ?? null;
 
-        if(empty($suspiciuos))
-            return response('invalid data');
+        $data = $request->all();
+
+        $suspicious = $data['suspicious'] == 'yes' ? 1 : 0;
+
+        if(empty($data['booking_id']))
+            return response('invalid booking id');
 
         try{
-            if($suspiciuos){
+            if($suspicious){
                 if(
                     !empty($data['criminal_id'])
                     && !empty($data['booking_id'])
@@ -69,25 +71,23 @@ class FaceRecognitionController extends Controller
                             'accuracy' => $data['accuracy']
                         ]
                     );
-                    //mark suspicious
-                    $update = Booking::where('id',$data['booking_id'])
-                    ->update(['suspicious' => 1]);
-
                 }
             }else{
-                //
+                //either there was no match
+                //guest booking without any valid image
             }
 
             //update booking info as  in both cases
-            $guest = Booking::where('id',$data['booking_id'])
+            Booking::where('id',$data['booking_id'])
             ->update([
+                'suspicious' => $suspicious,
                 'suspicious_check' => 1,// 1 - processed, 0 - pending
             ]);
 
         }catch(\Exception $e){
             return response('error '.substr($e->getMessage(), 0, 100));
         }
-        return response('Marked suspicious');
+        return response( (($suspicious==0) ? 'NOT' : '') . ' Marked suspicious');
 
     }
 

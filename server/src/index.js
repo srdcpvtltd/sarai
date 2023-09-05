@@ -66,7 +66,7 @@ async function loadModels() {
         )
     )
     console.log('labeledFaceDescriptors',labeledFaceDescriptors)
-    return new faceapi.FaceMatcher(labeledFaceDescriptors,0.5)
+    return new faceapi.FaceMatcher(labeledFaceDescriptors,0.6)
 
 }
 async function runFaceMatch(criminals, guests) {
@@ -74,14 +74,16 @@ async function runFaceMatch(criminals, guests) {
     //console.log('criminals', criminals)
     //console.log('guests', guests)
     const guest = guests[0];
+    const queryImageUrl = guest.photo_url;
+    console.log(guest)
 
     //load all images in faceMatcher - train model with existing set of images
     console.log('faceMatcher.. preparing',faceMatcher)
     faceMatcher =  await createBbtFaceMatcher(criminals)
     console.log('faceMatcher.. training data loaded ',faceMatcher)
 
-    console.log('preparing query image data',guest.photo_url)
-    const queryImage = await canvas.loadImage(guest.photo_url)
+    console.log('preparing query image data')
+    const queryImage = await canvas.loadImage(queryImageUrl)
     const queryImgFaceDescriptors = await faceapi.computeFaceDescriptor(queryImage)
     console.log('Query image descriptor computed',queryImgFaceDescriptors)
 
@@ -114,7 +116,7 @@ async function runFaceMatch(criminals, guests) {
         //send result to API
         const payload = {
             booking_id : parseInt(guest.id),
-            suspiciuos: 1,
+            suspicious: 'yes',
             criminal_id: parseInt(bestMatchUserId),
             accuracy: accuracy,
         }
@@ -142,7 +144,34 @@ const getGuests = (criminals, callback) => {
         // console.log('Total '+Object.keys(guests).length+' guests found!')
         // console.log(guests)
 
-        runFaceMatch(criminals, guests);
+        const guest = guests[0];
+        const queryImageUrl = guest.photo_url;
+
+        fetch(queryImageUrl).then(response => {
+
+            if (response.ok) {
+
+                console.log('Image URL is valid');
+                //proceed
+                runFaceMatch(criminals, guests);
+
+            } else {
+
+                console.log('Image URL is invalid');
+                //stop and send response
+                axios.post(API_URL+'/save-bg-check-results',{
+                    booking_id : parseInt(guest.id),
+                    suspicious: 'no',
+                    criminal_id: '',
+                    accuracy: '',
+                }).then((response) => {
+                    let data = response.data
+                    console.log('data',data)
+                })
+        }
+      })
+
+
 
     })
     .catch((error) => {
@@ -198,6 +227,8 @@ app.listen(PORT, () => {
 
 
 app.get('/', (req, res) => {
-    run()
-    //res.send({'status':'Running'});
+    run().then(()=>{
+        res.send({'status':'Completed'});
+    })
+
 });
