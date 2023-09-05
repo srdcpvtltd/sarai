@@ -2,9 +2,9 @@
   "name": "nodefc",
   "version": "1.0.0",
   "description": "face recognition using nodejs",
-  "main": "src/index.ts",
+  "main": "src/test.ts",
   "scripts": {
-    "dev": "nodemon src/index.ts",
+    "dev": "nodemon src/test.js",
     "build": "rm -rf build/ && prettier --write src/ && tsc"
   },
   "author": "prasad madhavi",

@@ -9,13 +9,21 @@ use Illuminate\Http\Request;
 class FaceRecognitionController extends Controller
 {
     public function criminals(Request $request){
-        $items = Criminal::all();
+
+        $items = Criminal::select([
+            'id',
+            'name',
+            'photo',
+         ])
+         ->orderBy('created_at','ASC')
+         ->get();
+
         $items->map(function ($item, $key) {
-            return $item->photo = url('storage/criminals/'.$item->photo);
+            return $item->photo_url = url('storage/criminals/'.$item->photo);
         });
         $items->all();
 
-        $data = $items->pluck('photo','id')->toArray();
+        $data = $items->toArray();
 
         return response($data);
     }
@@ -24,14 +32,14 @@ class FaceRecognitionController extends Controller
 
         $booking = Booking::select([
             'id as id',
-            'gues_name as guest_name',
-            'guest_image as guest_photo'
+            'gues_name as name',
+            'guest_image as photo'
          ])
          ->whereNull('suspicious')
          ->orderBy('created_at','DESC')
          ->first();
 
-        $booking->guest_photo = url('storage/bookings/'.$booking->guest_photo);
+        $booking->photo_url = url('storage/bookings/'.$booking->photo);
 
         return response([$booking]);
     }

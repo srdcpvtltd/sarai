@@ -23,3 +23,9 @@ nodefc/build
 nodefc/npm-debug.log
 nodefc/.nyc
 nodefc/.DS_Store
+
+server/node_modules
+server/build
+server/npm-debug.log
+server/.nyc
+server/.DS_Store

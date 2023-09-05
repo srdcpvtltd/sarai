@@ -49,6 +49,7 @@ class CriminalsController extends Controller
             if ($request->file('photo')) {
                 $extension = $request->file('photo')->getClientOriginalExtension();
                 $documentName = time().'.'.$extension;
+                dd($documentName);
 
                 Storage::disk('local')->put( $documentName, $request->photo);
 
@@ -88,7 +89,7 @@ class CriminalsController extends Controller
             if ($request->file('photo')) {
                 $extension = $request->file('photo')->getClientOriginalExtension();
                 $documentName = time().'.'.$extension;
-                $request->photo->move(public_path('storage/criminals'), $documentName);
+                Storage::disk('public')->put( 'criminals/'.$documentName, file_get_contents($request->photo));
                 $data['photo'] = $documentName;
             }else{
                 unset($data['photo']);
