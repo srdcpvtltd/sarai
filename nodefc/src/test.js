@@ -233,7 +233,7 @@ console.log('imagesPathCriminals',imagesPathCriminals)
 
     }
 
-    run()
+    //run()
 
 /**
  * Routes
