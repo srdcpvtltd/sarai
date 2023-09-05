@@ -82,6 +82,9 @@
                             <div class="col-md-4 detil-item">
                                 <b>Remarks:</b> {{ $criminal->remarks }}
                             </div>
+                            <div class="col-md-4 detil-item">
+                                <a class="btn btn-danger btn-xs" href="{{ asset(url('/mark/unsuspicious/'.$booking->id)) }}">Mark as Not Suspicious</a>
+                            </div>
 
                         </div>
                     </div>

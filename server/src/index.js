@@ -107,7 +107,7 @@ async function runFaceMatch(criminals, guests) {
 
         //get accuracy
         let accuracy = parseFloat(matchArray[1].replace('(', '').replace(')',''))
-        accuracy = (10 - accuracy) * 10
+        accuracy = (1 - accuracy) * 100
 
         console.log('bestMatch...'+bestMatch)
         console.log('accuracy...'+accuracy)

@@ -16,7 +16,7 @@ class FaceRecognitionController extends Controller
             'name',
             'photo',
          ])
-         ->orderBy('created_at','ASC')
+         ->orderBy('created_at','DESC')
          ->get();
 
         $items->map(function ($item, $key) {

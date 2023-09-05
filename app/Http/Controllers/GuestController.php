@@ -143,6 +143,20 @@ class GuestController extends Controller
         return Redirect::back()->withErrors(['message'=>'Marked as suspicious']);
     }
 
+    public function mark_unsuspicious($bookingId) {
+
+        $update = Booking::where('user_id',Auth::id())
+        ->where('id',$bookingId)->update(['suspicious' => 0]);
+
+        //remove criminal match entry
+        $crimimatch = CriminalBookingMatch::where('booking_id',$bookingId)->first();
+
+        if(!empty($crimimatch))
+            $crimimatch->delete();
+
+        return Redirect::back()->withErrors(['message'=>'Marked as NOT suspicious']);
+    }
+
     public function adminshow($bookingId) {
         $booking = Booking::where('id',$bookingId)->with(['country','state','city','rooms','accompanies','nationalityName','p_country','p_city','p_state'])->first();
 

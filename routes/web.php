@@ -60,6 +60,7 @@ Route::post('/guest/store', [GuestController::class, 'store'])->name('guest.stor
 Route::get('/guest/list', [GuestController::class, 'checkoutList'])->name('guest.list')->middleware(['auth','XSS','2fa',]);
 Route::get('/guest/detail/{booking_id}', [GuestController::class, 'show'])->name('guest.show')->middleware(['auth','XSS','2fa',]);
 Route::get('/mark/suspicious/{booking_id}', [GuestController::class, 'mark_suspicious'])->name('guest.mark_suspicious')->middleware(['auth','XSS','2fa',]);
+Route::get('/mark/unsuspicious/{booking_id}', [GuestController::class, 'mark_unsuspicious'])->name('guest.mark_unsuspicious')->middleware(['auth','XSS','2fa',]);
 Route::get('/guest/checkout/{booking_id}/room/{room_id}', [GuestController::class, 'checkOut'])->name('guest.checkout')->middleware(['auth','XSS','2fa',]);
 Route::get('/guest/filter', [GuestController::class, 'guestFilter'])->name('guest.filter')->middleware(['auth','XSS','2fa',]);
 Route::get('/guest/quickinvoice/{id}', [GuestController::class, 'quickinvoice'])->name('guest.quickinvoice')->middleware(['auth','XSS','2fa',]);
