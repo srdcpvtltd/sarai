@@ -69,6 +69,10 @@ class FaceRecognitionController extends Controller
                             'accuracy' => $data['accuracy']
                         ]
                     );
+                    //mark suspicious
+                    $update = Booking::where('id',$data['booking_id'])
+                    ->update(['suspicious' => 1]);
+
                 }
             }else{
                 //
@@ -81,9 +85,9 @@ class FaceRecognitionController extends Controller
             ]);
 
         }catch(\Exception $e){
-            return response('error'.substr($e->getMessage(), 0, 100));
+            return response('error '.substr($e->getMessage(), 0, 100));
         }
-        return response('success');
+        return response('Marked suspicious');
 
     }
 
